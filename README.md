@@ -1,16 +1,24 @@
 # mux - Yazi previewer multiplexer
 
-This [preview plugin](https://yazi-rs.github.io/docs/plugins/overview/#previewer) enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle.
+This [previewer plugin](https://yazi-rs.github.io/docs/plugins/overview/#previewer) enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle.
 
-Example previewer configuration:
+## Installation
+
+```bash
+ya pkg add peterfication/mux
+```
+
+## Configuration
+
+### Example previewer configuration:
 
 ```toml
 prepend_previewers = [
-  { name = "*.csv", run = "mux duckdb code" },
+  { name = "*.csv", run = "mux code file" },
 ]
 ```
 
-Example keybinding:
+### Example keybinding:
 
 ```toml
 [mgr]
