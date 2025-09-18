@@ -165,7 +165,7 @@ function M:entry(job)
 	-- 	level = "info",
 	-- })
 
-	ya.emit("peek", { skip = 0, force = true })
+	ya.emit("peek", { 0, force = true })
 end
 
 return M
