@@ -21,3 +21,7 @@ prepend_keymap = [
 ## How it works
 
 It uses the params to determine which previewers to call and calls the currents previewer `peek` and `seek` method accordingly.
+
+## License
+
+This project is licensed under the MIT license ([LICENSE](LICENSE) or [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT))
