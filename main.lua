@@ -90,11 +90,8 @@ local function call_previewer_for_file_url(file_url, method, job)
 		return
 	end
 
-	-- Wrap around the current index to stay within the bounds of available previewers
-	local current_mod = ((current - 1) % previewers_count) + 1
-	local previewer_name = previewers[current_mod]
-
-	call_previewer(previewer_name, method, job)
+	local current_previewer_name = previewers[current]
+	call_previewer(current_previewer_name, method, job)
 end
 
 -- mux:peek
@@ -110,7 +107,7 @@ function M:peek(job)
 	local file_url = tostring(job.file.url)
 	ya.dbg({ title = "mux peek", args = job.args, file_url = file_url })
 
-  -- Store the previewers list in the state for seek and entry commands
+	-- Store the previewers list in the state for seek and entry commands
 	local previewers = job.args
 	set_state(state_key_previewers(file_url), previewers)
 
@@ -135,6 +132,11 @@ function M:seek(job)
 	call_previewer_for_file_url(file_url, "seek", job)
 end
 
+-- Advance the index but wrap around the count to stay in bounds.
+local function advance_index(current, count)
+	return (current % count) + 1
+end
+
 -- mux:entry
 --
 -- Advance to the next previewer for the currently hovered file.
@@ -148,9 +150,20 @@ function M:entry(job)
 	local file_url = get_hovered_url_string()
 	ya.dbg({ title = "mux entry", args = job.args, file_url = file_url })
 
+	local previewers = get_state(state_key_previewers(file_url))
+	local previewers_count = #previewers
 	local current = get_state(state_key_current(file_url)) or 1
-	local new_current = current + 1
+
+	local new_current = advance_index(current, previewers_count)
 	set_state(state_key_current(file_url), new_current)
+
+	-- local new_previewer_name = previewers[new_current]
+	-- ya.notify({
+	-- 	title = "mux",
+	-- 	content = string.format("Switched to previewer %d/%d: %s", new_current, previewers_count, new_previewer_name),
+	-- 	timeout = 1,
+	-- 	level = "info",
+	-- })
 
 	ya.emit("peek", { skip = 0, force = true })
 end
