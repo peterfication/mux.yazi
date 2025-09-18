@@ -60,6 +60,29 @@ local function call_previewer(previewer_name, method, job)
 	end
 end
 
+-- Call the current previewer for the given file URL and method (peek or seek).
+--
+-- Get the relevant data from the state.
+local function call_previewer_for_file_url(file_url, method, job)
+	local state_key_previewers = "previewers-" .. file_url
+	local state_key_current = "current-" .. file_url
+
+	local previewers = get_state(state_key_previewers)
+	local previewers_count = #previewers
+	local current = get_state(state_key_current) or 1
+
+	if previewers_count == 0 then
+		ya.notify({ title = "mux", content = "No previewers configured", timeout = 2, level = "error" })
+		return
+	end
+
+	-- Wrap around the current index to stay within the bounds of available previewers
+	local current_mod = ((current - 1) % previewers_count) + 1
+	local previewer_name = previewers[current_mod]
+
+	call_previewer(previewer_name, method, job)
+end
+
 -- mux:peek
 --
 -- Forward the peek command to the current previewer for the currently previewed file.
@@ -73,28 +96,14 @@ function M:peek(job)
 	local file_url = tostring(job.file.url)
 	ya.dbg({ title = "mux peek", args = job.args, file_url = file_url })
 
-	local state_key_current = "current-" .. file_url
-	local state_key_previewers = "previewers-" .. file_url
-
 	local previewers = job.args
-	local previews_count = #previewers
-
-	if previews_count == 0 then
-		ya.notify({ title = "mux", content = "No previewers configured", timeout = 2, level = "error" })
-		return
-	end
-
+	local state_key_previewers = "previewers-" .. file_url
 	set_state(state_key_previewers, previewers)
-
-	local current = get_state(state_key_current) or 1
-	-- Wrap around the current index to stay within the bounds of available previewers
-	local current_mod = ((current - 1) % previews_count) + 1
-	local previewer_name = previewers[current_mod]
 
 	-- Remove the args from the job before calling the previewer because the args are the
 	-- previewers list and not needed by the actual previewer.
 	job.args = {}
-	call_previewer(previewer_name, "peek", job)
+	call_previewer_for_file_url(file_url, "peek", job)
 end
 
 -- mux:seek
@@ -109,23 +118,7 @@ function M:seek(job)
 	local file_url = tostring(job.file.url)
 	ya.dbg({ title = "mux seek", args = job.args, file_url = file_url })
 
-	local state_key_current = "current-" .. file_url
-	local state_key_previewers = "previewers-" .. file_url
-
-	local previewers = get_state(state_key_previewers)
-	local previews_count = #previewers
-
-	if previews_count == 0 then
-		ya.notify({ title = "mux", content = "No previewers configured", timeout = 2, level = "error" })
-		return
-	end
-
-	local current = get_state(state_key_current) or 1
-	-- Wrap around the current index to stay within the bounds of available previewers
-	local current_mod = ((current - 1) % previews_count) + 1
-	local previewer_name = previewers[current_mod]
-
-	call_previewer(previewer_name, "seek", job)
+	call_previewer_for_file_url(file_url, "seek", job)
 end
 
 -- mux:entry
