@@ -12,6 +12,23 @@ local get_state = ya.sync(function(state, key)
 	return state[key]
 end)
 
+-- Prefix for all state keys used by this plugin
+local state_key_prefix = "mux-"
+
+-- Generate state key for the current previewer index.
+--
+-- It's based on the file URL to handle multiple files being previewed.
+local function state_key_current(file_url)
+	return state_key_prefix .. "-current-" .. file_url
+end
+
+-- Generate state key for the previewers.
+--
+-- It's based on the file URL to handle multiple files being previewed.
+local function state_key_previewers(file_url)
+	return state_key_prefix .. "-previewers-" .. file_url
+end
+
 -- Needed for getting the file URL in entry function
 -- See https://yazi-rs.github.io/docs/plugins/overview#async-context
 local get_hovered_url_string = ya.sync(function()
@@ -64,12 +81,9 @@ end
 --
 -- Get the relevant data from the state.
 local function call_previewer_for_file_url(file_url, method, job)
-	local state_key_previewers = "previewers-" .. file_url
-	local state_key_current = "current-" .. file_url
-
-	local previewers = get_state(state_key_previewers)
+	local previewers = get_state(state_key_previewers(file_url))
 	local previewers_count = #previewers
-	local current = get_state(state_key_current) or 1
+	local current = get_state(state_key_current(file_url)) or 1
 
 	if previewers_count == 0 then
 		ya.notify({ title = "mux", content = "No previewers configured", timeout = 2, level = "error" })
@@ -96,9 +110,9 @@ function M:peek(job)
 	local file_url = tostring(job.file.url)
 	ya.dbg({ title = "mux peek", args = job.args, file_url = file_url })
 
+  -- Store the previewers list in the state for seek and entry commands
 	local previewers = job.args
-	local state_key_previewers = "previewers-" .. file_url
-	set_state(state_key_previewers, previewers)
+	set_state(state_key_previewers(file_url), previewers)
 
 	-- Remove the args from the job before calling the previewer because the args are the
 	-- previewers list and not needed by the actual previewer.
@@ -131,14 +145,12 @@ end
 -- - Store it back
 -- - Trigger a force peek to refresh the preview.
 function M:entry(job)
-	local hovered_url_string = get_hovered_url_string()
-	ya.dbg({ title = "mux entry", args = job.args, file_url = hovered_url_string })
+	local file_url = get_hovered_url_string()
+	ya.dbg({ title = "mux entry", args = job.args, file_url = file_url })
 
-	local state_key = "current-" .. hovered_url_string
-	local current = get_state(state_key) or 1
-
+	local current = get_state(state_key_current(file_url)) or 1
 	local new_current = current + 1
-	set_state(state_key, new_current)
+	set_state(state_key_current(file_url), new_current)
 
 	ya.emit("peek", { skip = 0, force = true })
 end
