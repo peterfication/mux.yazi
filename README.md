@@ -109,6 +109,12 @@ prepend_keymap = [
 
 See [previewer plugin docs](https://yazi-rs.github.io/docs/plugins/overview/#previewer).
 
+Useful [just](https://github.com/casey/just) commands are defined in the [Justfile](Justfile).
+
+```bash
+just ci
+```
+
 ## License
 
 This project is licensed under the MIT license ([LICENSE](LICENSE) or [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT))
