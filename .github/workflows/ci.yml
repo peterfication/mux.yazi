@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v2
+      - name: Run StyLua
+        run: stylua --check .
+
+  format-dprint:
+    name: Format check with dprint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dprint/check@v2.3
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Luacheck linter
+        uses: lunarmodules/luacheck@v1
