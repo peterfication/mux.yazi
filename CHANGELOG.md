@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.2 - 2025-09-19
+
 - Add `notify_on_switch` option. Default to `false`.
 
 ## 0.1.1 - 2025-09-19
