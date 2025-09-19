@@ -42,6 +42,20 @@ local get_hovered_url_string = ya.sync(function()
 	return tostring(cx.active.current.hovered.url)
 end)
 
+-- Dynamically load a previewer module/plugin by name
+local function load_previewer(name)
+	local ok, mod = pcall(require, name)
+	if not ok then
+		return nil, mod
+	end
+
+	if type(mod) ~= "table" then
+		return nil, string.format("module '%s' did not return a table", name)
+	end
+
+	return mod, nil
+end
+
 -- Make sure the aliases table has a valid structure.
 --
 -- Example:
@@ -97,20 +111,6 @@ local function validate_aliases(aliases)
 	return true, nil
 end
 
--- Dynamically load a previewer module/plugin by name
-local function load_previewer(name)
-	local ok, mod = pcall(require, name)
-	if not ok then
-		return nil, mod
-	end
-
-	if type(mod) ~= "table" then
-		return nil, string.format("module '%s' did not return a table", name)
-	end
-
-	return mod, nil
-end
-
 -- Show an error notification
 local function show_error(error)
 	ya.notify({ title = "mux error", content = error, timeout = 5, level = "error" })
@@ -118,7 +118,7 @@ end
 
 -- Call the specified method of the specified previewer with the given job.
 local function call_previewer(previewer_name, method, job)
-	local previewer = nil
+	local previewer
 	local aliases = get_state(state_key_options("aliases")) or {}
 
 	if aliases[previewer_name] then
