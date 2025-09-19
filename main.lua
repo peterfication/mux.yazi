@@ -29,11 +29,73 @@ local function state_key_previewers(file_url)
 	return state_key_prefix .. "-previewers-" .. file_url
 end
 
+-- Generate state key for options.
+--
+-- Options are global and not per-file.
+local function state_key_options(option_key)
+	return state_key_prefix .. "-options-" .. option_key
+end
+
 -- Needed for getting the file URL in entry function
 -- See https://yazi-rs.github.io/docs/plugins/overview#async-context
 local get_hovered_url_string = ya.sync(function()
 	return tostring(cx.active.current.hovered.url)
 end)
+
+-- Make sure the aliases table has a valid structure.
+--
+-- Example:
+-- {
+--   alias1 = { previewer = "plugin_name", args = { "arg1", "arg2" } },
+--   alias2 = { previewer = "plugin_name2", args = { "arg1" } },
+--   ...
+-- }
+local function validate_aliases(aliases)
+	if type(aliases) ~= "table" then
+		return false, "aliases must be a table"
+	end
+
+	for alias, alias_args in pairs(aliases) do
+		if type(alias) ~= "string" then
+			return false, "alias keys must be strings"
+		end
+
+		if type(alias_args) ~= "table" then
+			return false, string.format("args for alias '%s' must be a table", alias)
+		end
+
+		local previewer_name = alias_args.previewer
+		local args = alias_args.args
+
+		if type(previewer_name) ~= "string" then
+			return false, string.format("alias.previewer for '%s' alias must be a string", alias)
+		end
+		if type(args) ~= "table" then
+			return false, string.format("alias.args for '%s' alias must be a table", alias)
+		end
+		-- Check each entry in args is a string
+		for i, value in ipairs(args) do
+			if type(value) ~= "string" then
+				return false, string.format("arg %d for alias '%s' must be a string", i, alias)
+			end
+		end
+
+		local mod, err = load_previewer(previewer_name)
+		if not mod then
+			return false, string.format("cannot load previewer '%s' for alias '%s': %s", previewer_name, alias, err)
+		end
+
+		if type(mod.peek) ~= "function" then
+			return false, string.format("missing peek() in previewer '%s' for alias '%s'", previewer_name, alias)
+		end
+
+		if type(mod.seek) ~= "function" then
+			return false, string.format("missing seek() in previewer '%s' for alias '%s'", previewer_name, alias)
+		end
+	end
+
+	return true, nil
+end
 
 -- Dynamically load a previewer module/plugin by name
 local function load_previewer(name)
@@ -56,7 +118,16 @@ end
 
 -- Call the specified method of the specified previewer with the given job.
 local function call_previewer(previewer_name, method, job)
-	local previewer = load_previewer(previewer_name)
+	local previewer = nil
+	local aliases = get_state(state_key_options("aliases")) or {}
+
+	if aliases[previewer_name] then
+		local alias = aliases[previewer_name]
+		previewer = load_previewer(alias.previewer)
+		job.args = alias.args
+	else
+		previewer = load_previewer(previewer_name)
+	end
 
 	if not previewer then
 		show_error(string.format("cannot load previewer '%s'", previewer_name))
@@ -166,6 +237,21 @@ function M:entry(job)
 	-- })
 
 	ya.emit("peek", { 0, force = true })
+end
+
+-- Plugin setup function
+--
+-- - Set the aliases for the plugin commands. See validate_aliases() for the required structure.
+function M:setup(options)
+	ya.dbg({ title = "mux setup", options = options })
+
+	local aliases = options.aliases or {}
+	local valid, err = validate_aliases(aliases)
+	if not valid then
+		show_error("mux setup error: " .. err)
+		return
+	end
+	set_state(state_key_options("aliases"), aliases)
 end
 
 return M
