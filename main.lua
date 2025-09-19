@@ -228,13 +228,20 @@ function M:entry(job)
 	local new_current = advance_index(current, previewers_count)
 	set_state(state_key_current(file_url), new_current)
 
-	-- local new_previewer_name = previewers[new_current]
-	-- ya.notify({
-	-- 	title = "mux",
-	-- 	content = string.format("Switched to previewer %d/%d: %s", new_current, previewers_count, new_previewer_name),
-	-- 	timeout = 1,
-	-- 	level = "info",
-	-- })
+	if get_state(state_key_options("notify_on_switch")) then
+		local new_previewer_name = previewers[new_current]
+		ya.notify({
+			title = "mux",
+			content = string.format(
+				"Switched to previewer %d/%d: %s",
+				new_current,
+				previewers_count,
+				new_previewer_name
+			),
+			timeout = 1,
+			level = "info",
+		})
+	end
 
 	ya.emit("peek", { 0, force = true })
 end
@@ -252,6 +259,9 @@ function M:setup(options)
 		return
 	end
 	set_state(state_key_options("aliases"), aliases)
+
+	local notify_on_switch = options.notify_on_switch or false
+	set_state(state_key_options("notify_on_switch"), notify_on_switch)
 end
 
 return M

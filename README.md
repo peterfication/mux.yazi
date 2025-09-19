@@ -10,7 +10,7 @@ ya pkg add peterfication/mux
 
 ## Configuration
 
-### Example previewer configuration:
+### Example previewer configuration
 
 ```toml
 prepend_previewers = [
@@ -18,13 +18,29 @@ prepend_previewers = [
 ]
 ```
 
-### Example keybinding:
+### Example keybinding
 
 ```toml
 [mgr]
 prepend_keymap = [
   { on = "p", run = "mux next", desc = "Show next previewer" },
 ]
+```
+
+### Example setup
+
+| Option             | Description                                                    |
+| ------------------ | -------------------------------------------------------------- |
+| `notify_on_switch` | Whether to show a notification when the previewer is switched. |
+| `aliases`          | See "Use cases" for examples on how to use it.                 |
+
+> NOTE: Setup is only required if you want to change from the defaults.
+
+```lua
+require("mux"):setup({
+  notify_on_switch = true, -- Default: false
+  aliases = {}, -- Default: {}
+})
 ```
 
 ## How it works
