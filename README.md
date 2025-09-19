@@ -1,6 +1,6 @@
 # mux - Yazi plugin multiplexer
 
-This Yazi plugin enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle.
+This Yazi plugin enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle. It uses the args to determine which previewers to call and calls the current previewers `peek` and `seek` methods accordingly.
 
 ## Installation
 
@@ -42,10 +42,6 @@ require("mux"):setup({
   aliases = {}, -- Default: {}
 })
 ```
-
-## How it works
-
-It uses the params to determine which previewers to call and calls the current previewers `peek` and `seek` method accordingly.
 
 ## Use cases
 
