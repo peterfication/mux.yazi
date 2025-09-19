@@ -1,6 +1,6 @@
-# mux - Yazi previewer multiplexer
+# mux - Yazi plugin multiplexer
 
-This [previewer plugin](https://yazi-rs.github.io/docs/plugins/overview/#previewer) enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle.
+This Yazi plugin enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle.
 
 ## Installation
 
@@ -34,6 +34,12 @@ It uses the params to determine which previewers to call and calls the currents 
 ## Roadmap
 
 - Support arguments passed down to previewers, e.g. to support [piper](https://github.com/yazi-rs/plugins/tree/main/piper.yazi). This will most likely lead to a breaking change because the passed in arguments need to be previewers plus their args.
+- Support spotters
+- Support fetchers?
+
+## Development
+
+See [previewer plugin docs](https://yazi-rs.github.io/docs/plugins/overview/#previewer).
 
 ## License
 
