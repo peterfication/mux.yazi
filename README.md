@@ -103,6 +103,7 @@ prepend_keymap = [
 
 - Support spotters
 - Support fetchers?
+- Remember current previewer of file type or suffix
 
 ## Development
 
