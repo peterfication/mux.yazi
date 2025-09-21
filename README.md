@@ -76,9 +76,9 @@ require("mux"):setup({
 ```toml
 # yazi.toml
 [mgr]
-prepend_keymap = [
-  # Plugin: mux
-  { on = "P", run = "plugin mux next", desc = "Cycle through mux previewers" },
+prepend_previewers = [
+  { name = "*/", run = "mux eza eza_tree" },
+  # ...
 ]
 ```
 
@@ -88,6 +88,7 @@ prepend_keymap = [
 prepend_keymap = [
   # Plugin: mux
   { on = "P", run = "plugin mux next", desc = "Cycle through mux previewers" },
+  # ...
 ]
 ```
 
@@ -110,6 +111,7 @@ prepend_previewers = [
 prepend_keymap = [
   # Plugin: mux
   { on = "P", run = "plugin mux next", desc = "Cycle through mux previewers" },
+  # ...
 ]
 ```
 
