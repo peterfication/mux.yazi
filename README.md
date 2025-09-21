@@ -2,6 +2,8 @@
 
 This Yazi plugin enables multiple previewers per previewer entry. One can specify the previewers to cycle through and a keybinding that triggers the cycle. It uses the args to determine which previewers to call and calls the current previewers `peek` and `seek` methods accordingly.
 
+Credits to [@sxyazi](https://github.com/sxyazi) for the idea (see [issue comment](https://github.com/sxyazi/yazi/issues/3176#issuecomment-3307014021)).
+
 ## Installation
 
 ```bash
