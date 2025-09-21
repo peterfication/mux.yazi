@@ -17,6 +17,7 @@ ya pkg add peterfication/mux
 ```toml
 prepend_previewers = [
   { name = "*.csv", run = "mux code file" },
+  # ...
 ]
 ```
 
@@ -26,15 +27,16 @@ prepend_previewers = [
 [mgr]
 prepend_keymap = [
   { on = "p", run = "mux next", desc = "Show next previewer" },
+  # ...
 ]
 ```
 
 ### Example setup
 
-| Option             | Description                                                    |
-| ------------------ | -------------------------------------------------------------- |
-| `notify_on_switch` | Whether to show a notification when the previewer is switched. |
-| `aliases`          | See "Use cases" for examples on how to use it.                 |
+| Option             | Default | Description                                                    |
+| ------------------ | ------- | -------------------------------------------------------------- |
+| `notify_on_switch` | `false` | Whether to show a notification when the previewer is switched. |
+| `aliases`          | `{}`    | See "Use cases" for examples on how to use it.                 |
 
 > NOTE: Setup is only required if you want to change from the defaults.
 
