@@ -2,7 +2,7 @@ default:
   just --list
 
 # Run all steps from CI
-ci: format lint
+ci: format lint test
 
 # Format all files
 format: format-lua format-rest
@@ -18,3 +18,7 @@ format-rest:
 # Lint lua files with luacheck
 lint:
   luacheck .
+
+# Run tests
+test:
+  lua tests/main_spec.lua
