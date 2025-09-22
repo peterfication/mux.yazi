@@ -4,6 +4,8 @@ This Yazi plugin enables multiple previewers per previewer entry. One can specif
 
 Credits to [@sxyazi](https://github.com/sxyazi) for the idea (see [issue comment](https://github.com/sxyazi/yazi/issues/3176#issuecomment-3307014021)).
 
+[![asciicast](https://asciinema.org/a/18RMMPd1YoB2wqaUxsFf4Z6Sn.svg)](https://asciinema.org/a/18RMMPd1YoB2wqaUxsFf4Z6Sn)
+
 ## Installation
 
 ```bash
