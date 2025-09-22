@@ -64,13 +64,13 @@ require("mux"):setup({
 		eza = {
 			previewer = "piper",
 			args = {
-				"eza -a --oneline --color=always --icons=always --group-directories-first --no-quotes $1",
+				'eza -a --oneline --color=always --icons=always --group-directories-first --no-quotes "$1"',
 			},
 		},
 		eza_tree = {
 			previewer = "piper",
 			args = {
-				"eza -T -a --color=always --icons=always --group-directories-first --no-quotes $1",
+				'eza -T -a --color=always --icons=always --group-directories-first --no-quotes "$1"',
 			},
 		},
 	},
