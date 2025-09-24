@@ -14,6 +14,12 @@ end)
 
 -- Prefix for all state keys used by this plugin
 local state_key_prefix = "mux-"
+-- Define state option keys so that they are not hardcoded everywhere
+local state_option_keys = {
+	aliases = "aliases",
+	notify_on_switch = "notify_on_switch",
+	remember_per_file_suffix = "remember_per_file_suffix",
+}
 
 -- Generate state key for options.
 --
@@ -28,7 +34,7 @@ end
 -- If remember_per_file_suffix==true, use the file suffix (or "folder" for directories)
 -- instead of the full URL.
 local function state_key_current(file_url)
-	local remember_per_file_suffix = get_state(state_key_options("remember_per_file_suffix"))
+	local remember_per_file_suffix = get_state(state_key_options(state_option_keys.remember_per_file_suffix))
 
 	local state_key = file_url
 	if remember_per_file_suffix then
@@ -140,7 +146,7 @@ end
 -- Call the specified method of the specified previewer with the given job.
 local function call_previewer(previewer_name, method, job)
 	local previewer
-	local aliases = get_state(state_key_options("aliases")) or {}
+	local aliases = get_state(state_key_options(state_option_keys.aliases)) or {}
 
 	if aliases[previewer_name] then
 		local alias = aliases[previewer_name]
@@ -249,7 +255,7 @@ function M:entry(job)
 	local new_current = advance_index(current, previewers_count)
 	set_state(state_key_current(file_url), new_current)
 
-	if get_state(state_key_options("notify_on_switch")) then
+	if get_state(state_key_options(state_option_keys.notify_on_switch)) then
 		local new_previewer_name = previewers[new_current]
 		ya.notify({
 			title = "mux",
@@ -279,13 +285,13 @@ function M:setup(options)
 		show_error("mux setup error: " .. err)
 		return
 	end
-	set_state(state_key_options("aliases"), aliases)
+	set_state(state_key_options(state_option_keys.aliases), aliases)
 
 	local notify_on_switch = options.notify_on_switch or false
-	set_state(state_key_options("notify_on_switch"), notify_on_switch)
+	set_state(state_key_options(state_option_keys.notify_on_switch), notify_on_switch)
 
 	local remember_per_file_suffix = options.remember_per_file_suffix or false
-	set_state(state_key_options("remember_per_file_suffix"), remember_per_file_suffix)
+	set_state(state_key_options(state_option_keys.remember_per_file_suffix), remember_per_file_suffix)
 end
 
 return M
