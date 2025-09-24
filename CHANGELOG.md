@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.3 - 2025-09-24
+
 - Add `remember_per_file_suffix` option. Default to `false`.
 
 ## 0.1.2 - 2025-09-19
