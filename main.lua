@@ -15,11 +15,39 @@ end)
 -- Prefix for all state keys used by this plugin
 local state_key_prefix = "mux-"
 
+-- Generate state key for options.
+--
+-- Options are global and not per-file.
+local function state_key_options(option_key)
+	return state_key_prefix .. "-options-" .. option_key
+end
+
 -- Generate state key for the current previewer index.
 --
 -- It's based on the file URL to handle multiple files being previewed.
+-- If remember_per_file_suffix==true, use the file suffix (or "folder" for directories)
+-- instead of the full URL.
 local function state_key_current(file_url)
-	return state_key_prefix .. "-current-" .. file_url
+	local remember_per_file_suffix = get_state(state_key_options("remember_per_file_suffix"))
+
+	local state_key = file_url
+	if remember_per_file_suffix then
+		ya.dbg({ title = "mux state_key_current", content = "Using suffix for state key" })
+
+		local cha = fs.cha(Url(file_url), true)
+		local mime
+		if cha.is_dir then
+			mime = "folder"
+		else
+			-- It's a file, get the suffix as mime for now
+			-- TODO: Get the actual mime type
+			mime = string.match(file_url, "%.([^.]+)$") or "unknown"
+		end
+
+		state_key = mime or file_url
+	end
+
+	return state_key_prefix .. "-current-" .. state_key
 end
 
 -- Generate state key for the previewers.
@@ -27,13 +55,6 @@ end
 -- It's based on the file URL to handle multiple files being previewed.
 local function state_key_previewers(file_url)
 	return state_key_prefix .. "-previewers-" .. file_url
-end
-
--- Generate state key for options.
---
--- Options are global and not per-file.
-local function state_key_options(option_key)
-	return state_key_prefix .. "-options-" .. option_key
 end
 
 -- Needed for getting the file URL in entry function
@@ -262,6 +283,9 @@ function M:setup(options)
 
 	local notify_on_switch = options.notify_on_switch or false
 	set_state(state_key_options("notify_on_switch"), notify_on_switch)
+
+	local remember_per_file_suffix = options.remember_per_file_suffix or false
+	set_state(state_key_options("remember_per_file_suffix"), remember_per_file_suffix)
 end
 
 return M

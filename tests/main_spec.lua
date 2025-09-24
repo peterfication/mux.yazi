@@ -3,6 +3,7 @@ local notifications = {}
 local emits = {}
 local dbg_messages = {}
 local previewer_calls = {}
+local cha_state = {}
 
 local function shallow_copy(value)
 	if type(value) ~= "table" then
@@ -67,6 +68,7 @@ package.preload["test.previewer.error"] = function()
 	return mod
 end
 
+-- Mock ya API
 ya = {
 	sync = function(fn)
 		return function(...)
@@ -87,6 +89,7 @@ ya = {
 	end,
 }
 
+-- Mock context
 cx = {
 	active = {
 		current = {
@@ -95,6 +98,18 @@ cx = {
 			},
 		},
 	},
+}
+
+-- Mock Url object
+function Url(url)
+	return url
+end
+
+-- Mock fs implementation
+fs = {
+	cha = function(url, _)
+		return cha_state[url]
+	end,
 }
 
 local function tables_equal(a, b)
@@ -129,7 +144,15 @@ end
 
 local function assert_equal(actual, expected, message)
 	if actual ~= expected then
-		error(message or string.format("expected %s, got %s", tostring(expected), tostring(actual)), 2)
+		local explanation = string.format("expected %s, got %s", tostring(expected), tostring(actual))
+
+		if message then
+			message = message .. ": " .. explanation
+		else
+			message = explanation
+		end
+
+		error(message, 2)
 	end
 end
 
@@ -298,6 +321,64 @@ test("with notify_on_switch, entry notifies", function()
 	local notification = notifications[1]
 	assert_equal(notification.title, "mux")
 	assert_equal(notification.content, "Switched to previewer 2/2: test.previewer.two")
+end)
+
+test("with remember_per_file_suffix=true, peek uses last previewer for the file suffix", function()
+	reset_environment()
+	M:setup({ remember_per_file_suffix = true })
+	local file_url1 = "file:///file1.json"
+	local file_url2 = "file:///file2.json"
+	cha_state[file_url1] = { is_dir = false }
+	cha_state[file_url2] = { is_dir = false }
+	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
+	cx.active.current.hovered.url = file_url1
+	M:entry({ args = {} }) -- switch to previewer.two
+	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url2 } })
+
+	-- "entry" emits peek, but this does not lead to a call in the tests
+	assert_equal(#previewer_calls, 2, "expected two previewer calls")
+
+	-- peek call for file1
+	local peek_call1 = previewer_calls[1]
+	assert_equal(peek_call1.name, "test.previewer.one")
+	assert_equal(peek_call1.method, "peek")
+
+	-- peek call for file2
+	local peek_call2 = previewer_calls[2]
+	assert_equal(peek_call2.name, "test.previewer.two")
+	assert_equal(peek_call2.method, "peek")
+end)
+
+test("with remember_per_file_suffix=false, peek uses last previewer for the file only", function()
+	reset_environment()
+	M:setup({ remember_per_file_suffix = false })
+	local file_url1 = "file:///file1.json"
+	local file_url2 = "file:///file2.json"
+	cha_state[file_url1] = { is_dir = false }
+	cha_state[file_url2] = { is_dir = false }
+	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
+	cx.active.current.hovered.url = file_url1
+	M:entry({ args = {} }) -- switch to previewer.two
+	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url2 } })
+	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
+
+	-- "entry" emits peek, but this does not lead to a call in the tests
+	assert_equal(#previewer_calls, 3, "expected three previewer calls")
+
+	-- peek call for file1
+	local peek_call1 = previewer_calls[1]
+	assert_equal(peek_call1.name, "test.previewer.one")
+	assert_equal(peek_call1.method, "peek")
+
+	-- peek call for file2
+	local peek_call2 = previewer_calls[2]
+	assert_equal(peek_call2.name, "test.previewer.one")
+	assert_equal(peek_call2.method, "peek")
+
+	-- peek call for file1
+	local peek_call3 = previewer_calls[3]
+	assert_equal(peek_call3.name, "test.previewer.two")
+	assert_equal(peek_call3.method, "peek")
 end)
 
 local failures = 0
