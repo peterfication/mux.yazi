@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix error when no mux previewers are defined for a file type but the mux entry function is triggered on it
+
 ## 0.1.3 - 2025-09-24
 
 - Add `remember_per_file_suffix` option. Default to `false`.

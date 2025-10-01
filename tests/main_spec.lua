@@ -252,6 +252,16 @@ test("entry cycles to the next previewer and emits a forced peek", function()
 	assert_equal(seek_call.method, "seek")
 end)
 
+test("entry does not fail if there are no mux previewers configured for the file type", function()
+	reset_environment()
+
+	local file_url = "file:///file3"
+	set_hovered(file_url)
+	M:entry({ args = {} })
+
+	assert_equal(#emits, 0, "expected no emit calls")
+end)
+
 test("setup aliases load the target previewer and pass args", function()
 	reset_environment()
 
