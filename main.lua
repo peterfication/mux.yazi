@@ -9,7 +9,16 @@ end)
 -- Get plugin state
 -- See https://yazi-rs.github.io/docs/plugins/overview#async-context
 local get_state = ya.sync(function(state, key)
-	return state[key]
+	ya.dbg({ title = "mux get_state", key = key })
+	local value = state[key]
+
+	if value == nil then
+		ya.dbg({ title = "mux get_state", content = "key not found, returning nil" })
+		return nil
+	else
+		ya.dbg({ title = "mux get_state", content = "key found, returning value", value = value })
+		return value
+	end
 end)
 
 -- Prefix for all state keys used by this plugin
@@ -41,6 +50,7 @@ local function state_key_current(file_url)
 		ya.dbg({ title = "mux state_key_current", content = "Using suffix for state key" })
 
 		local cha = fs.cha(Url(file_url), true)
+		ya.dbg({ title = "mux state_key_current", content = "after cha" })
 		local mime
 		if cha.is_dir then
 			mime = "folder"
@@ -249,8 +259,20 @@ function M:entry(job)
 	ya.dbg({ title = "mux entry", args = job.args, file_url = file_url })
 
 	local previewers = get_state(state_key_previewers(file_url))
+	if not previewers or #previewers == 0 then
+		ya.dbg({ title = "mux entry", message = "No previewers configured for this file" })
+		ya.notify({
+			title = "mux",
+			content = "No previewers configured via mux for this file",
+			timeout = 2,
+			level = "error",
+		})
+		return
+	end
+
 	local previewers_count = #previewers
 	local current = get_state(state_key_current(file_url)) or 1
+	ya.dbg({ title = "mux entry", previewers = previewers })
 
 	local new_current = advance_index(current, previewers_count)
 	set_state(state_key_current(file_url), new_current)
