@@ -3,7 +3,6 @@ local notifications = {}
 local emits = {}
 local dbg_messages = {}
 local previewer_calls = {}
-local cha_state = {}
 
 local function shallow_copy(value)
 	if type(value) ~= "table" then
@@ -104,13 +103,6 @@ cx = {
 function Url(url)
 	return url
 end
-
--- Mock fs implementation
-fs = {
-	cha = function(url, _)
-		return cha_state[url]
-	end,
-}
 
 local function tables_equal(a, b)
 	if type(a) ~= "table" or type(b) ~= "table" then
@@ -333,13 +325,11 @@ test("with notify_on_switch, entry notifies", function()
 	assert_equal(notification.content, "Switched to previewer 2/2: test.previewer.two")
 end)
 
-test("with remember_per_file_suffix=true, peek uses last previewer for the file suffix", function()
+test("with remember_per_file_extension=true, peek uses last previewer for the file extension", function()
 	reset_environment()
-	M:setup({ remember_per_file_suffix = true })
+	M:setup({ remember_per_file_extension = true })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
-	cha_state[file_url1] = { is_dir = false }
-	cha_state[file_url2] = { is_dir = false }
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
 	cx.active.current.hovered.url = file_url1
 	M:entry({ args = {} }) -- switch to previewer.two
@@ -359,13 +349,11 @@ test("with remember_per_file_suffix=true, peek uses last previewer for the file 
 	assert_equal(peek_call2.method, "peek")
 end)
 
-test("with remember_per_file_suffix=false, peek uses last previewer for the file only", function()
+test("with remember_per_file_extension=false, peek uses last previewer for the file only", function()
 	reset_environment()
-	M:setup({ remember_per_file_suffix = false })
+	M:setup({ remember_per_file_extension = false })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
-	cha_state[file_url1] = { is_dir = false }
-	cha_state[file_url2] = { is_dir = false }
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
 	cx.active.current.hovered.url = file_url1
 	M:entry({ args = {} }) -- switch to previewer.two
