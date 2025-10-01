@@ -325,9 +325,9 @@ test("with notify_on_switch, entry notifies", function()
 	assert_equal(notification.content, "Switched to previewer 2/2: test.previewer.two")
 end)
 
-test("with remember_per_file_suffix=true, peek uses last previewer for the file suffix", function()
+test("with remember_per_file_extension=true, peek uses last previewer for the file extension", function()
 	reset_environment()
-	M:setup({ remember_per_file_suffix = true })
+	M:setup({ remember_per_file_extension = true })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
@@ -349,9 +349,9 @@ test("with remember_per_file_suffix=true, peek uses last previewer for the file 
 	assert_equal(peek_call2.method, "peek")
 end)
 
-test("with remember_per_file_suffix=false, peek uses last previewer for the file only", function()
+test("with remember_per_file_extension=false, peek uses last previewer for the file only", function()
 	reset_environment()
-	M:setup({ remember_per_file_suffix = false })
+	M:setup({ remember_per_file_extension = false })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Rename remember_per_file_suffix to remember_per_file_extension
 - Fix file suffix handling. `fs.cha` did not work.
 - Fix error when no mux previewers are defined for a file type but the mux entry function is triggered on it
 

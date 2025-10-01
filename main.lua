@@ -27,7 +27,7 @@ local state_key_prefix = "mux-"
 local state_option_keys = {
 	aliases = "aliases",
 	notify_on_switch = "notify_on_switch",
-	remember_per_file_suffix = "remember_per_file_suffix",
+	remember_per_file_extension = "remember_per_file_extension",
 }
 
 -- Generate state key for options.
@@ -40,10 +40,10 @@ end
 -- Generate state key for the current previewer index.
 --
 -- It's based on the file URL to handle multiple files being previewed.
--- If remember_per_file_suffix==true, use the file extension (or "folder" for directories)
--- instead of the full URL.
+-- If remember_per_file_extension==true, use the file extension instead of the full URL.
+-- But only if the file has an extension, otherwise use the full URL.
 local function state_key_current(file_url)
-	local remember_per_file_extension = get_state(state_key_options(state_option_keys.remember_per_file_suffix))
+	local remember_per_file_extension = get_state(state_key_options(state_option_keys.remember_per_file_extension))
 
 	local state_key = file_url
 	if remember_per_file_extension then
@@ -304,8 +304,8 @@ function M:setup(options)
 	local notify_on_switch = options.notify_on_switch or false
 	set_state(state_key_options(state_option_keys.notify_on_switch), notify_on_switch)
 
-	local remember_per_file_suffix = options.remember_per_file_suffix or false
-	set_state(state_key_options(state_option_keys.remember_per_file_suffix), remember_per_file_suffix)
+	local remember_per_file_extension = options.remember_per_file_extension or false
+	set_state(state_key_options(state_option_keys.remember_per_file_extension), remember_per_file_extension)
 end
 
 return M
