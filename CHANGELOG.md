@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fix file suffix handling. `fs.cha` did not work.
 - Fix error when no mux previewers are defined for a file type but the mux entry function is triggered on it
 
 ## 0.1.3 - 2025-09-24

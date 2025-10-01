@@ -3,7 +3,6 @@ local notifications = {}
 local emits = {}
 local dbg_messages = {}
 local previewer_calls = {}
-local cha_state = {}
 
 local function shallow_copy(value)
 	if type(value) ~= "table" then
@@ -104,13 +103,6 @@ cx = {
 function Url(url)
 	return url
 end
-
--- Mock fs implementation
-fs = {
-	cha = function(url, _)
-		return cha_state[url]
-	end,
-}
 
 local function tables_equal(a, b)
 	if type(a) ~= "table" or type(b) ~= "table" then
@@ -338,8 +330,6 @@ test("with remember_per_file_suffix=true, peek uses last previewer for the file 
 	M:setup({ remember_per_file_suffix = true })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
-	cha_state[file_url1] = { is_dir = false }
-	cha_state[file_url2] = { is_dir = false }
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
 	cx.active.current.hovered.url = file_url1
 	M:entry({ args = {} }) -- switch to previewer.two
@@ -364,8 +354,6 @@ test("with remember_per_file_suffix=false, peek uses last previewer for the file
 	M:setup({ remember_per_file_suffix = false })
 	local file_url1 = "file:///file1.json"
 	local file_url2 = "file:///file2.json"
-	cha_state[file_url1] = { is_dir = false }
-	cha_state[file_url2] = { is_dir = false }
 	M:peek({ args = { "test.previewer.one", "test.previewer.two" }, file = { url = file_url1 } })
 	cx.active.current.hovered.url = file_url1
 	M:entry({ args = {} }) -- switch to previewer.two
