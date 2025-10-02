@@ -35,18 +35,18 @@ prepend_keymap = [
 
 ### Example setup (optional)
 
-| Option                     | Default | Description                                                                                                                                                                                                                  |
-| -------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `notify_on_switch`         | `false` | Whether to show a notification when the previewer is switched.                                                                                                                                                               |
-| `remember_per_file_suffix` | `false` | If `false`, the current previewer is remembered per file (per session). If `true`, the current previewer is remembered per suffix, so e.g. each JSON file will be previewed with the last selected previewer for JSON files. |
-| `aliases`                  | `{}`    | See "Use cases" for examples on how to use it.                                                                                                                                                                               |
+| Option                        | Default | Description                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `notify_on_switch`            | `false` | Whether to show a notification when the previewer is switched.                                                                                                                                                                                                                                                                                                                 |
+| `remember_per_file_extension` | `false` | If `false`, the current previewer is remembered per file (per session). If `true`, the current previewer is remembered per suffix, so e.g. each JSON file will be previewed with the last selected previewer for JSON files. NOTE: this is without mime types yet, so folders and files without an extension will be treated the same, which will lead to unexpected behavior. |
+| `aliases`                     | `{}`    | See "Use cases" for examples on how to use it.                                                                                                                                                                                                                                                                                                                                 |
 
 > NOTE: Setup is only required if you want to change from the defaults.
 
 ```lua
 require("mux"):setup({
   notify_on_switch = true, -- Default: false
-  remember_per_file_suffix = true, -- Default: false
+  remember_per_file_extension = true, -- Default: false
   aliases = {}, -- Default: {}
 })
 ```
