@@ -2,11 +2,13 @@
 
 ## Unreleased
 
+- Make `remember_per_file_extension` work for folders again.
+
 ## 0.2.0 - 2025-10-01
 
 ### Breaking Changes
 
-- Rename remember_per_file_suffix to remember_per_file_extension
+- Rename `remember_per_file_suffix` to `remember_per_file_extension`
 
 ### Bug Fixes
 

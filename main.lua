@@ -13,10 +13,10 @@ local get_state = ya.sync(function(state, key)
 	local value = state[key]
 
 	if value == nil then
-		ya.dbg({ title = "mux get_state", content = "key not found, returning nil" })
+		ya.dbg({ title = "mux get_state", content = "key '" .. key .. "'not found, returning nil" })
 		return nil
 	else
-		ya.dbg({ title = "mux get_state", content = "key found, returning value", value = value })
+		ya.dbg({ title = "mux get_state", content = "key '" .. key .. "' found, returning value", value = value })
 		return value
 	end
 end)
@@ -50,9 +50,14 @@ local function state_key_current(file_url)
 		ya.dbg({ title = "mux state_key_current", content = "Using file_extension for state key" })
 
 		-- TODO: Get the actual mime type
+		-- NOTE: without the mime type, folders and files without an extension will be treated the
+		-- same, which will lead to unexpected behavior.
+
 		local file_extension = string.match(file_url, "%.([^.]+)$")
 
-		state_key = file_extension or file_url
+		ya.dbg({ title = "mux state_key_current file_extension", file_extension = file_extension })
+
+		state_key = file_extension or "unknown-or-folder"
 	end
 
 	return state_key_prefix .. "-current-" .. state_key
