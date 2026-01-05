@@ -18,7 +18,7 @@ ya pkg add peterfication/mux
 
 ```toml
 prepend_previewers = [
-  { name = "*.csv", run = "mux code file" },
+  { url = "*.csv", run = "mux code file" },
   # ...
 ]
 ```
@@ -98,9 +98,9 @@ require("mux"):setup({
 
 ```toml
 # yazi.toml
-[mgr]
+[plugin]
 prepend_previewers = [
-  { name = "*/", run = "mux eza_tree_1 eza_tree_2 eza_tree_3 eza_tree_4" },
+  { url = "*/", run = "mux eza_tree_1 eza_tree_2 eza_tree_3 eza_tree_4" },
   # ...
 ]
 ```
@@ -121,9 +121,9 @@ prepend_keymap = [
 
 ```toml
 prepend_previewers = [
-  { name = "*.csv", run = "mux duckdb code" },
-  { name = "*.tsv", run = "mux duckdb code" },
-  { name = "*.json", run = "mux duckdb code" },
+  { url = "*.csv", run = "mux duckdb code" },
+  { url = "*.tsv", run = "mux duckdb code" },
+  { url = "*.json", run = "mux duckdb code" },
   # ...
 ]
 ```
