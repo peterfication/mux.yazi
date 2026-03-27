@@ -63,6 +63,7 @@ Explanations:
 
 - `cd` before `eza` makes sure that the root does not contain the full path
 - `LS_COLORS` paints executables green, like yazi
+- Or use an [eza theme](https://github.com/eza-community/eza-themes) that aligns with your [yazi flavor](https://github.com/yazi-rs/flavors).
 
 ```lua
 -- init.lua
