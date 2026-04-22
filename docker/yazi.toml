@@ -1,0 +1,5 @@
+[plugin]
+prepend_previewers = [
+  { mime = "text/*", run = "mux code file" },
+  { mime = "application/json", run = "mux code file" },
+]

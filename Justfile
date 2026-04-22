@@ -22,3 +22,18 @@ lint:
 # Run tests
 test:
   lua tests/main_spec.lua
+
+CONTAINER_IMAGE := "mux-yazi-dev"
+CONTAINER_VERSION := "v26.1.22"
+
+# Build the podman image with a pinned Yazi version
+container_build VERSION=CONTAINER_VERSION:
+  podman build --build-arg YAZI_VERSION={{VERSION}} -t {{CONTAINER_IMAGE}}:{{VERSION}} .
+
+# Start an interactive shell with the repo mounted as the live plugin source
+container_shell VERSION=CONTAINER_VERSION:
+  podman run --rm -it -v {{justfile_directory()}}:/workspace/mux.yazi -v {{justfile_directory()}}/docker:/opt/mux-dev:ro -w /workspace/mux.yazi {{CONTAINER_IMAGE}}:{{VERSION}}
+
+# Start Yazi directly inside the same development container
+container_yazi VERSION=CONTAINER_VERSION:
+  podman run --rm -it -v {{justfile_directory()}}:/workspace/mux.yazi -v {{justfile_directory()}}/docker:/opt/mux-dev:ro -w /workspace/mux.yazi {{CONTAINER_IMAGE}}:{{VERSION}} yazi

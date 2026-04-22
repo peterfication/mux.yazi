@@ -158,6 +158,50 @@ Useful [just](https://github.com/casey/just) commands are defined in the [Justfi
 just ci
 ```
 
+### Container development
+
+This repository includes a `podman`-oriented development image that installs a pinned Yazi release and mounts the local checkout as the live `mux.yazi` plugin source inside the container.
+
+Build the image with the default Yazi version:
+
+```bash
+just container_build
+```
+
+Build the image with a specific Yazi version:
+
+```bash
+just container_build v26.1.4
+```
+
+Open an interactive shell in the container:
+
+```bash
+just container_shell v26.1.4
+```
+
+Or start Yazi directly:
+
+```bash
+just container_yazi v26.1.4
+```
+
+Inside the container, this repository is mounted at `/workspace/mux.yazi` and linked into Yazi as:
+
+```text
+/root/.config/yazi/plugins/mux.yazi
+```
+
+The local `docker/` directory is mounted into `/opt/mux-dev`, and the container entrypoint copies `docker/init.lua`, `docker/yazi.toml`, and `docker/keymap.toml` into Yazi's config directory on startup. Changes there are picked up on the next container start without rebuilding the image.
+
+The container also installs a minimal Yazi config that:
+
+- loads `mux` from `init.lua`
+- binds `P` to `plugin mux next`
+- configures `mux code file` for text and JSON previews
+
+If you're using Podman on Linux with SELinux enabled, add `:Z` to the bind mount in the `container_shell` and `container_yazi` recipes in the [Justfile](Justfile).
+
 ## License
 
 This project is licensed under the MIT license ([LICENSE](LICENSE) or [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT))
