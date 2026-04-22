@@ -1,0 +1,4 @@
+[mgr]
+prepend_keymap = [
+  { on = "P", run = "plugin mux next", desc = "Cycle through mux previewers" },
+]
