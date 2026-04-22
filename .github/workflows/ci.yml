@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install asdf & tools
-        uses: asdf-vm/actions/install@v2
+        uses: asdf-vm/actions/install@v4
       - name: Run StyLua
         run: stylua --check .
 
@@ -24,14 +24,14 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Luacheck linter
         uses: lunarmodules/luacheck@v1
 
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: leafo/gh-actions-lua@v11
+      - uses: actions/checkout@v5
+      - uses: leafo/gh-actions-lua@v12
       - name: Run tests
         run: lua tests/main_spec.lua
