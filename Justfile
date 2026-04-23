@@ -37,3 +37,15 @@ container_shell VERSION=CONTAINER_VERSION:
 # Start Yazi directly inside the same development container
 container_yazi VERSION=CONTAINER_VERSION:
   podman run --rm -it -v {{justfile_directory()}}:/workspace/mux.yazi -v {{justfile_directory()}}/docker:/opt/mux-dev:ro -w /workspace/mux.yazi {{CONTAINER_IMAGE}}:{{VERSION}} yazi
+
+# Build the container with the latest Yazi version
+container_build_nightly:
+  just container_build VERSION=nightly
+
+# Start an interactive shell with the latest Yazi version
+container_shell_nightly:
+  just container_shell VERSION=nightly
+
+# Start Yazi directly with the latest version inside the same development container
+container_yazi_nightly:
+  just container_yazi VERSION=nightly
